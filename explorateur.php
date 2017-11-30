@@ -12,7 +12,7 @@ if (isset($_REQUEST["action"]))
 		if (!is_dir("./" . $_GET["nomRep"])) 
 		{
 			// A compléter : Code de création d'un répertoire
-			mkdir("./" . $_GET["nomRep"]); // commentaire
+			mkdir("./" . $_GET["nomRep"]);
 		}
 		break;
 
@@ -180,59 +180,6 @@ function miniature($type,$nom,$dw,$nomMin)
 	imagedestroy($im);
 	imagedestroy($im2);
 }
-
-function incrustation($typeCible, $nomCible, $typeSource, $nomSource, $dw, $dx, $dy, $nomMin)
-{
-	// Insère l'image source au point (dx,dy) dans l'image cible
-	// L'image insérée sera redimensionnée pour avoir une largeur de $dw
-
-	// lecture de l'image cible, enregistrement dans la zone mémoire $im
-	switch($typeCible)
-	{
-		case "jpeg" : $imCible =  imagecreatefromjpeg ($nomCible);break;
-		case "png" : $imCible =  imagecreatefrompng ($nomCible);break;
-		case "gif" : $imCible =  imagecreatefromgif ($nomCible);break;		
-	}
-
-	// lecture de l'image source, enregistrement dans la zone mémoire $im
-	switch($typeSource)
-	{
-		case "jpeg" : $imSource =  imagecreatefromjpeg ($nomSource);break;
-		case "png" : $imSource =  imagecreatefrompng ($nomSource);break;
-		case "gif" : $imSource =  imagecreatefromgif ($nomSource);break;		
-	}
-
-	// On connait la dimension en largeur de l'image à incruster
-	// dw = destination width
-
-	$sw = imagesx($imSource); // largeur de l'image d'origine
-	$sh = imagesy($imSource); // hauteur de l'image d'origine
-	// TODO : calculer $dh	
-	$dh = 0;
-
-	$src_x= 0; 		// image à incruster
-	$src_y= 0; 
-	$src_w= 0; 
-	$src_h= 0;
-
-	$dst_x= 0;
-	$dst_y= 0;
-	$dst_w= 0; 
-	$dst_h= 0; 
-
-	imagecopyresized ($imCible, $imSource, $dst_x , $dst_y  , $src_x  , $src_y  , $dst_w  , $dst_h  , $src_w  , $src_h);
-	
-	
-	switch($typeCible)
-	{
-		case "jpeg" : imagejpeg($imCible,$nomMin);imagejpeg($imCible);break;
-		case "png" : imagepng($imCible,$nomMin);imagepng($imCible);break;
-		case "gif" : imagegif($imCible,$nomMin);imagegif($imCible);break;		
-	}
-
-	imagedestroy($imCible);
-	imagedestroy($imSource);
-}
 ?>
 
 <html>
@@ -279,15 +226,15 @@ div div
 
 <body>
 
-<h1>Gestion des répertoires </h1>
+<h1>Gestion des r&eacutepertoires </h1>
 <form>
-<label>Créer un nouveau répertoire : </label>
+<label>Cr&eacuteer un nouveau r&eacutepertoire : </label>
 <input type="text" name="nomRep"/>
 <input type="submit" name="action" value="Creer" />
 </form>
 
 <form>
-<label>Choisir un répertoire : </label>
+<label>Choisir un r&eacutepertoire : </label>
 <select name="nomRep">
 <?php
 	$rep = opendir("./"); // ouverture du repertoire 
@@ -311,12 +258,12 @@ div div
 </form>
 
 <?php
-	if (!$nomRep)  die("Choisissez un répertoire"); 
+	if (!$nomRep)  die("Choisissez un r&eacutepertoire"); 
 	// interrompt immédiatement l'exécution du code php
 ?>
 
 <hr />
-<h2> Contenu du répertoire '<?php echo$_GET["nomRep"]?>' </h2>
+<h2> Contenu du r&eacutepertoire '<?php echo$_GET["nomRep"]?>' </h2>
 
 
 <form enctype="multipart/form-data" method="post">
