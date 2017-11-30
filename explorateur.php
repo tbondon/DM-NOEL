@@ -335,7 +335,7 @@ div div
 	closedir($rep);
 
 	// A compléter : afficher un message lorsque le répertoire est vide
-	if ($numImage==0) echo "<h3>Aucune image dans le répertoire</h3>";
+	if ($numImage==0) echo "<h3>Aucune image dans le r&eacutepertoire</h3>";
 
 ?>
 
