@@ -1,4 +1,96 @@
+<!-- <style>
+body{
+	background-color:red;
+}
+.form-control {
+  display: block;
+  width: 100%;
+  height: 34px;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  color: #555;
+  background-color: #fff;
+  background-image: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+  -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+       -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+          transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+}
+</style> -->
+<link href="../bootstrap/css/bootstrap.css" rel="stylesheet">
+
+<html>
+<head>
+<style>
+
+.mini
+{
+	position:relative;
+	width:200px;
+	height:400px;
+	float:left;
+	border:1px black solid;
+	margin-right:5px;
+	margin-bottom:5px;
+}
+div img
+{
+	margin : 0 auto 0 auto;
+	border : none;
+}
+div div 
+{
+	position:absolute;
+	bottom:0px;
+	width:100%;
+	background-color:lightgrey;
+	border-top:1px black solid;
+	text-align:center;
+}
+
+.renommer
+{
+	width:150px;
+}
+.btn_renommer
+{
+
+	width:35px;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>Gestion des répertoires </h1>
+<form>
+<label>Créer un nouveau répertoire : </label>
+<input type="text" style="width:50%" class="form-control" name="nomRep"/>
+<input type="submit" class="btn btn-default" name="action" value="Creer" />
+</form>
+
+<form>
+<label>Choisir un répertoire : </label>
+<select name="nomRep" style="width:50%" class="form-control">
 <?php
+
+//C'est la propriété php_self qui nous l'indique : 
+// Quand on vient de index : 
+// [PHP_SELF] => /chatISIG/index.php 
+// Quand on vient directement par le répertoire templates
+// [PHP_SELF] => /chatISIG/templates/accueil.php
+
+// Si la page est appelée directement par son adresse, on redirige en passant pas la page index
+// Pas de soucis de bufferisation, puisque c'est dans le cas où on appelle directement la page sans son contexte
+
+
+// Pose qq soucis avec certains serveurs...
+echo "<?xml version=\"1.0\" encoding=\"utf-8\" ?>";
 
 if (isset($_REQUEST["nomRep"]))  $nomRep = $_REQUEST["nomRep"];
 else $nomRep = false;
@@ -12,7 +104,7 @@ if (isset($_REQUEST["action"]))
 		if (!is_dir("./" . $_GET["nomRep"])) 
 		{
 			// A compléter : Code de création d'un répertoire
-			mkdir("./" . $_GET["nomRep"]);
+			mkdir("./" . $_GET["nomRep"]); // commentaire
 		}
 		break;
 
@@ -180,62 +272,61 @@ function miniature($type,$nom,$dw,$nomMin)
 	imagedestroy($im);
 	imagedestroy($im2);
 }
+
+function incrustation($typeCible, $nomCible, $typeSource, $nomSource, $dw, $dx, $dy, $nomMin)
+{
+	// Insère l'image source au point (dx,dy) dans l'image cible
+	// L'image insérée sera redimensionnée pour avoir une largeur de $dw
+
+	// lecture de l'image cible, enregistrement dans la zone mémoire $im
+	switch($typeCible)
+	{
+		case "jpeg" : $imCible =  imagecreatefromjpeg ($nomCible);break;
+		case "png" : $imCible =  imagecreatefrompng ($nomCible);break;
+		case "gif" : $imCible =  imagecreatefromgif ($nomCible);break;		
+	}
+
+	// lecture de l'image source, enregistrement dans la zone mémoire $im
+	switch($typeSource)
+	{
+		case "jpeg" : $imSource =  imagecreatefromjpeg ($nomSource);break;
+		case "png" : $imSource =  imagecreatefrompng ($nomSource);break;
+		case "gif" : $imSource =  imagecreatefromgif ($nomSource);break;		
+	}
+
+	// On connait la dimension en largeur de l'image à incruster
+	// dw = destination width
+
+	$sw = imagesx($imSource); // largeur de l'image d'origine
+	$sh = imagesy($imSource); // hauteur de l'image d'origine
+	// TODO : calculer $dh	
+	$dh = 0;
+
+	$src_x= 0; 		// image à incruster
+	$src_y= 0; 
+	$src_w= 0; 
+	$src_h= 0;
+
+	$dst_x= 0;
+	$dst_y= 0;
+	$dst_w= 0; 
+	$dst_h= 0; 
+
+	imagecopyresized ($imCible, $imSource, $dst_x , $dst_y  , $src_x  , $src_y  , $dst_w  , $dst_h  , $src_w  , $src_h);
+	
+	
+	switch($typeCible)
+	{
+		case "jpeg" : imagejpeg($imCible,$nomMin);imagejpeg($imCible);break;
+		case "png" : imagepng($imCible,$nomMin);imagepng($imCible);break;
+		case "gif" : imagegif($imCible,$nomMin);imagegif($imCible);break;		
+	}
+
+	imagedestroy($imCible);
+	imagedestroy($imSource);
+}
 ?>
 
-<html>
-<head>
-<style>
-
-.mini
-{
-	position:relative;
-	width:200px;
-	height:400px;
-	float:left;
-	border:1px black solid;
-	margin-right:5px;
-	margin-bottom:5px;
-}
-div img
-{
-	margin : 0 auto 0 auto;
-	border : none;
-}
-div div 
-{
-	position:absolute;
-	bottom:0px;
-	width:100%;
-	background-color:lightgrey;
-	border-top:1px black solid;
-	text-align:center;
-}
-
-.renommer
-{
-	width:150px;
-}
-.btn_renommer
-{
-
-	width:35px;
-}
-
-</style>
-</head>
-
-<body>
-
-<h1>Gestion des r&eacutepertoires </h1>
-<form>
-<label>Cr&eacuteer un nouveau r&eacutepertoire : </label>
-<input type="text" name="nomRep"/>
-<input type="submit" name="action" value="Creer" />
-</form>
-
-<form>
-<label>Choisir un r&eacutepertoire : </label>
-<select name="nomRep">
 <?php
 	$rep = opendir("./"); // ouverture du repertoire 
 	while ( $fichier = readdir($rep))
@@ -254,16 +345,16 @@ div div
 	closedir($rep);
 ?>
 </select>
-<input type="submit" value="Explorer"> <input type="submit" name="action" value="Supprimer Repertoire">
+<input type="submit" class="btn btn-default" value="Explorer"> <input type="submit" class="btn btn-default" name="action" value="Supprimer Repertoire">
 </form>
 
 <?php
-	if (!$nomRep)  die("Choisissez un r&eacutepertoire"); 
+	if (!$nomRep)  die("Choisissez un répertoire"); 
 	// interrompt immédiatement l'exécution du code php
 ?>
 
 <hr />
-<h2> Contenu du r&eacutepertoire '<?php echo$_GET["nomRep"]?>' </h2>
+<h2> Contenu du répertoire '<?php echo$_GET["nomRep"]?>' </h2>
 
 
 <form enctype="multipart/form-data" method="post">
@@ -271,10 +362,10 @@ div div
 	<input type="hidden" name="nomRep" value="<?php echo $nomRep; ?>">
 	<label>Ajouter un fichier image : </label>
 	<input type="file" name="FileToUpload">
-	<input type="submit" value="Uploader" name="action">
+	<input type="submit"  class="btn btn-default" value="Uploader" name="action">
 </form>
 
-<?php
+<?php 
 
 	$numImage = 0;
 	$rep = opendir("./$nomRep"); 		// ouverture du repertoire 
@@ -335,7 +426,7 @@ div div
 	closedir($rep);
 
 	// A compléter : afficher un message lorsque le répertoire est vide
-	if ($numImage==0) echo "<h3>Aucune image dans le r&eacutepertoire</h3>";
+	if ($numImage==0) echo "<h3>Aucune image dans le répertoire</h3>";
 
 ?>
 
