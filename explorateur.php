@@ -12,7 +12,7 @@ if (isset($_REQUEST["action"]))
 		if (!is_dir("./" . $_GET["nomRep"])) 
 		{
 			// A compléter : Code de création d'un répertoire
-			mkdir("./" . $_GET["nomRep"]);
+			mkdir("./" . $_GET["nomRep"]); // commentaire
 		}
 		break;
 
