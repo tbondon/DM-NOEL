@@ -336,7 +336,7 @@ div div
 
 	// A compléter : afficher un message lorsque le répertoire est vide
 	if ($numImage==0) echo "<h3>Aucune image dans le répertoire</h3>";
-
+//bonjour
 ?>
 
 
