@@ -9,10 +9,10 @@ if (isset($_REQUEST["action"]))
 	{
 		case 'Creer' : 
 		if (isset($_GET["nomRep"]) && ($_GET["nomRep"] != ""))
-		if (!is_dir("./ressources/" . $_GET["nomRep"])) 
+		if (!is_dir("./" . $_GET["nomRep"])) 
 		{
 			// A compléter : Code de création d'un répertoire
-			mkdir("./ressources/" . $_GET["nomRep"]); // commentaire
+			mkdir("./" . $_GET["nomRep"]); // commentaire
 		}
 		break;
 
@@ -41,11 +41,11 @@ if (isset($_REQUEST["action"]))
 			$nomFichier = $_GET["nomFichier"]; // nouveau nom 
 
 			// A compléter : renomme le fichier et sa miniature si elle existe
-			if (file_exists("./ressources/$nomRep/$fichier"))			
-			rename("./ressources/$nomRep/$fichier","./ressources/$nomRep/$nomFichier");
+			if (file_exists("./$nomRep/$fichier"))			
+			rename("./$nomRep/$fichier","./$nomRep/$nomFichier");
 
-			if (file_exists("./ressources/$nomRep/thumbs/$fichier"))			
-			rename("./ressources/$nomRep/thumbs/$fichier","./ressources/$nomRep/thumbs/$nomFichier");
+			if (file_exists("./$nomRep/thumbs/$fichier"))			
+			rename("./$nomRep/thumbs/$fichier","./$nomRep/thumbs/$nomFichier");
 			
 			
 		}
@@ -57,25 +57,25 @@ if (isset($_REQUEST["action"]))
 
 			if (is_uploaded_file($_FILES["FileToUpload"]["tmp_name"]))
 			{
-				print("Quelques informations sur le fichier récupéré :<br>");
-				print("Nom : ".$_FILES["FileToUpload"]["name"]."<br>");
-				print("Type : ".$_FILES["FileToUpload"]["type"]."<br>");
-				print("Taille : ".$_FILES["FileToUpload"]["size"]."<br>");
-				print("Tempname : ".$_FILES["FileToUpload"]["tmp_name"]."<br>");
+				//print("Quelques informations sur le fichier récupéré :<br>");
+				//print("Nom : ".$_FILES["FileToUpload"]["name"]."<br>");
+				//print("Type : ".$_FILES["FileToUpload"]["type"]."<br>");
+				//print("Taille : ".$_FILES["FileToUpload"]["size"]."<br>");
+				//print("Tempname : ".$_FILES["FileToUpload"]["tmp_name"]."<br>");
 				$name = $_FILES["FileToUpload"]["name"];
-				copy($_FILES["FileToUpload"]["tmp_name"],"./ressources/$nomRep/$name");
+				copy($_FILES["FileToUpload"]["tmp_name"],"./$nomRep/$name");
 
 				// créer le répertoire miniature s'il n'existe pas
-				if (!is_dir("./ressources/$nomRep/thumbs")) 
+				if (!is_dir("./$nomRep/thumbs")) 
 				{
-					mkdir("./ressources/$nomRep/thumbs");
+					mkdir("./$nomRep/thumbs");
 				}
 					
-				$dataImg = getimagesize("./ressources/$nomRep/$name");  
+				$dataImg = getimagesize("./$nomRep/$name");  
 				$type= substr($dataImg["mime"],6);// on enleve "image/" 
 
 				// créer la miniature dans ce répertoire 
-				miniature($type,"./ressources/$nomRep/$name",200,"./ressources/$nomRep/thumbs/$name");
+				miniature($type,"./$nomRep/$name",200,"./$nomRep/thumbs/$name");
 			}
 			else
 			{
@@ -91,9 +91,9 @@ if (isset($_REQUEST["action"]))
 			{
 				// A compléter : Supprime le répertoire des miniatures s'il existe, puis le répertoire principal
 
-				if (is_dir("./ressources/$nomRep/thumbs"))
+				if (is_dir("./$nomRep/thumbs"))
 				{
-					$rep = opendir("./ressources/$nomRep/thumbs"); 		// ouverture du repertoire 
+					$rep = opendir("./$nomRep/thumbs"); 		// ouverture du repertoire 
 					while ( $fichier = readdir($rep))	// parcours de tout le contenu de ce répertoire
 					{
 
@@ -101,17 +101,17 @@ if (isset($_REQUEST["action"]))
 						{
 							// Pour éliminer les autres répertoires du menu déroulant, 
 							// on dispose de la fonction 'is_dir'
-							if (!is_dir("./ressources/$nomRep/thumbs/" . $fichier))
+							if (!is_dir("./$nomRep/thumbs/" . $fichier))
 							{
-								unlink("./ressources/$nomRep/thumbs/" . $fichier);
+								unlink("./$nomRep/thumbs/" . $fichier);
 							}
 						}
 					}
-					rmdir("./ressources/$nomRep/thumbs");
+					rmdir("./$nomRep/thumbs");
 				}
 
 				// répertoire principal
-				$rep = opendir("./ressources/$nomRep"); 		// ouverture du repertoire 
+				$rep = opendir("./$nomRep"); 		// ouverture du repertoire 
 				while ( $fichier = readdir($rep))	// parcours de tout le contenu de ce répertoire
 				{
 
@@ -119,14 +119,14 @@ if (isset($_REQUEST["action"]))
 					{
 						// Pour éliminer les autres répertoires du menu déroulant, 
 						// on dispose de la fonction 'is_dir'
-						if (!is_dir("./ressources/$nomRep/" . $fichier))
+						if (!is_dir("./$nomRep/" . $fichier))
 						{
-							unlink("./ressources/$nomRep/" . $fichier);
+							unlink("./$nomRep/" . $fichier);
 						}
 					}
 				}
 
-				rmdir("./ressources/$nomRep");
+				rmdir("./$nomRep");
 				$nomRep = false;
 			}
 		break;
@@ -290,7 +290,7 @@ div div
 <label>Choisir un répertoire : </label>
 <select name="nomRep">
 <?php
-	$rep = opendir("./ressources/"); // ouverture du repertoire 
+	$rep = opendir("./"); // ouverture du repertoire 
 	while ( $fichier = readdir($rep))
 	{
 		// On élimine le résultat '.' (répertoire courant) 
@@ -300,7 +300,7 @@ div div
 		{
 			// Pour éliminer les autres fichiers du menu déroulant, 
 			// on dispose de la fonction 'is_dir'
-			if (is_dir("./ressources/" . $fichier))
+			if (is_dir("./" . $fichier))
 				printf("<option value=\"$fichier\">$fichier</option>");
 		}
 	}
@@ -330,7 +330,7 @@ div div
 <?php
 
 	$numImage = 0;
-	$rep = opendir("./ressources/$nomRep"); 		// ouverture du repertoire 
+	$rep = opendir("./$nomRep"); 		// ouverture du repertoire 
 	while ( $fichier = readdir($rep))	// parcours de tout le contenu de ce répertoire
 	{
 	
@@ -338,7 +338,7 @@ div div
 		{
 			// Pour éliminer les autres répertoires du menu déroulant, 
 			// on dispose de la fonction 'is_dir'
-			if (!is_dir("./ressources/$nomRep/" . $fichier))
+			if (!is_dir("./$nomRep/" . $fichier))
 			{
 				// Un fichier... est-ce une image ?
 				// On ne liste que les images ... 
@@ -347,7 +347,7 @@ div div
 				if (strstr($formats,strrchr($fichier,"."))) 
 				{
 					$numImage++;
-					$dataImg = getimagesize("./ressources/$nomRep/$fichier"); 
+					$dataImg = getimagesize("./$nomRep/$fichier"); 
 
 					// A compléter : récupérer le type d'une image, et sa taille 
 					$width= $dataImg[0];
