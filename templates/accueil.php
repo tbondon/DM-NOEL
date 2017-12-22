@@ -18,7 +18,13 @@ if (basename($_SERVER["PHP_SELF"]) != "index.php")
 }
 
 ?>
-
+<style>
+#check
+{
+width : 30px;
+height : 30px;
+}
+</style>
 <!-- <style>
 body{
 	background-color:red;
@@ -91,7 +97,7 @@ if (isset($_REQUEST["action"]))
 				{
 					// A compléter : Code de création d'un répertoire
 					mkdir("./ressources/" . $_GET["nomRep"]); // commentaire
-					mkdir("./ressources/copyright" . $_GET["nomRep"]); // commentaire
+					mkdir("./ressources/" . $_GET["nomRep"]."/copyright" . $_GET["nomRep"]); // commentaire
 				}
 			break;
 
@@ -103,10 +109,11 @@ if (isset($_REQUEST["action"]))
 					$fichier = $_GET["fichier"];
 
 					// A compléter : Supprime le fichier image
+					unlink("ressources/" . $nomRep . "/copyright". $nomRep ."/" . $fichier);
+					unlink("ressources/" . $nomRep . "/copyright". $nomRep ."/thumbs/" . $fichier);
 					unlink("ressources/" . $nomRep . "/" . $fichier);
-
 					// A compléter : Supprime aussi la miniature si elle existe					
-					unlink("ressources/" . $nomRep . "thumbs/" . $fichier);
+					unlink("ressources/" . $nomRep . "/thumbs/" . $fichier);
 				}
 			break;
 
@@ -143,7 +150,7 @@ if (isset($_REQUEST["action"]))
 					//print("Tempname : ".$_FILES["FileToUpload"]["tmp_name"]."<br>");
 					$name = $_FILES["FileToUpload"]["name"];
 					copy($_FILES["FileToUpload"]["tmp_name"],"./ressources/$nomRep/$name");
-					logo_copyright("./ressources/$nomRep/$name","./ressources/copyright$nomRep/$name");
+					logo_copyright("./ressources/$nomRep/$name","./ressources/$nomRep/copyright$nomRep/$name");
 
 					// créer le répertoire miniature s'il n'existe pas
 					if (!is_dir("./ressources/$nomRep/thumbs")) 
@@ -151,9 +158,9 @@ if (isset($_REQUEST["action"]))
 						mkdir("./ressources/$nomRep/thumbs");
 					}
 
-					if (!is_dir("./ressources/copyright$nomRep/thumbs")) 
+					if (!is_dir("./ressources/$nomRep/copyright$nomRep/thumbs")) 
 					{
-						mkdir("./ressources/copyright$nomRep/thumbs");
+						mkdir("./ressources/$nomRep/copyright$nomRep/thumbs");
 					}
 
 					$dataImg = getimagesize("./ressources/$nomRep/$name");  
@@ -162,11 +169,11 @@ if (isset($_REQUEST["action"]))
 					// créer la miniature dans ce répertoire 
 					miniature($type,"./ressources/$nomRep/$name",200,"./ressources/$nomRep/thumbs/$name");
 
-					$dataImg = getimagesize("./ressources/copyright$nomRep/$name");  
+					$dataImg = getimagesize("./ressources/$nomRep/copyright$nomRep/$name");  
 					$type= substr($dataImg["mime"],6);// on enleve "image/" 
 
 					// créer la miniature dans ce répertoire 
-					miniature($type,"./ressources/copyright$nomRep/$name",200,"./ressources/copyright$nomRep/thumbs/$name");
+					miniature($type,"./ressources/$nomRep/copyright$nomRep/$name",200,"./ressources/$nomRep/copyright$nomRep/thumbs/$name");
 				}
 				else
 				{
@@ -363,11 +370,11 @@ if (!$nomRep)  die("Choisissez un r&eacutepertoire");
 </form>
 
 <?php 
+echo "<form enctype='multipart/form-data' method='post'>";
 $numImage = 0;
 $rep = opendir("./ressources/$nomRep"); 		// ouverture du repertoire 
 while ( $fichier = readdir($rep))	// parcours de tout le contenu de ce répertoire
 {
-
 	if (($fichier!=".") && ($fichier!=".."))
 	{
 		// Pour éliminer les autres répertoires du menu déroulant, 
@@ -399,10 +406,10 @@ while ( $fichier = readdir($rep))	// parcours de tout le contenu de ce répertoi
 					if ($vip[0] == "1")
 						echo "<a target=\"_blank\" href=\"ressources/$nomRep/$fichier\"><img src=\"ressources/$nomRep/thumbs/$fichier\"/></a>\n";
 					else
-						echo "<a target=\"_blank\" href=\"ressources/copyright$nomRep/$fichier\"><img src=\"ressources/copyright$nomRep/thumbs/$fichier\"/></a>\n";
+						echo "<a target=\"_blank\" href=\"ressources/$nomRep/copyright$nomRep/$fichier\"><img src=\"ressources/$nomRep/copyright$nomRep/thumbs/$fichier\"/></a>\n";
 				}
 				else
-					echo "<a><img src=\"ressources/copyright$nomRep/thumbs/$fichier\"/></a>\n";
+					echo "<a><img src=\"ressources/$nomRep/copyright$nomRep/thumbs/$fichier\"/></a>\n";
 
 				echo "<div>$fichier \n";			
 				echo "<a href=\"?nomRep=$nomRep&fichier=$fichier&action=Supprimer\" >Supp</a>\n";
@@ -416,7 +423,7 @@ while ( $fichier = readdir($rep))	// parcours de tout le contenu de ce répertoi
 				echo "<input type=\"text\" class=\"renommer\" name=\"nomFichier\" value=\"$fichier\" onclick=\"this.select();\" />\n";
 				echo "<input type=\"submit\" class=\"btn_renommer\" value=\">\" />\n";
 				echo "</form>\n";
-
+				echo "<br><input id='check' type='checkbox' name='$fichier'/>";
 				echo "</div></div>\n";
 
 				// A compléter : appeler echo "<br style=\"clear:left;\" />"; si on a affiché 5 images sur la ligne actuelle
@@ -426,9 +433,10 @@ while ( $fichier = readdir($rep))	// parcours de tout le contenu de ce répertoi
 			}
 		}
 	}
+
 }
 closedir($rep);
-
+echo "<input type='submit'  class='btn btn-default' value='Download' name='action'></form>";
 // A compléter : afficher un message lorsque le répertoire est vide
 if ($numImage==0) echo "<h3>Aucune image dans le r&eacutepertoire</h3>";
 
@@ -457,7 +465,7 @@ function logo_copyright($image,$nomCopy)
 	imagecolortransparent($im, $couleur); 								// Définir la couleur transparente
 
 	/** CHARGEMENT DU LOGO COPYRIGHT **/
-	$logo = "ressources/images/logo.jpg";								// Chemin du fichier
+	$logo = "utiles/images/logo.jpg";								// Chemin du fichier
 	/** Vérifie si l'image est un .jpeg ou un .png ou un .gif **/
 	if(exif_imagetype($logo) == IMAGETYPE_JPEG)
 		$imlogo = imagecreatefromjpeg($logo);
@@ -478,7 +486,7 @@ function logo_copyright($image,$nomCopy)
 
 	/** DEFINIR LA POLICE DU TEXTE **/
 	putenv('GDFONTPATH=' . realpath('./ressources/polices'));
-	$font = "./ressources/polices/chumbly.ttf";
+	$font = "./utiles/polices/chumbly.ttf";
 
 	/** SUPERPOSE L'IMAGE ET LE TEXTE **/
 	imagettftext($im, $width/10, 0, $width * 0.25, $height * 0.9, $couleur, $font, "copyright");	// affiche le texte sur l'image

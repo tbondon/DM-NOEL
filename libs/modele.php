@@ -69,7 +69,7 @@ function verifvipBdd($login)
 	// renvoie faux si user inconnu
 	// renvoie l'id de l'utilisateur si succès
 
-	$SQL="SELECT admin FROM users WHERE pseudo='$login'";
+	$SQL="SELECT vip FROM users WHERE pseudo='$login'";
 
 	return (SQLSelect($SQL));
 
