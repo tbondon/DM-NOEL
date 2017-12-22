@@ -229,7 +229,44 @@ if (isset($_REQUEST["action"]))
 			}
 			break;
 
-		case 'Copyright':
+		case 'Download':
+
+		if (isset($_GET["nom"]) && ($_GET["nom"] != ""))
+			{
+				if (isset($_GET["numImage"]) && ($_GET["numImage"] != ""))
+				{
+					$zipPath = "./".$nom.".zip";
+					$zip = new ZipArchive(); 
+			      	if($zip->open($nom.'.zip') == true)
+				      	if($zip->open($nom.'.zip', ZipArchive::CREATE) == true)
+				      	{
+				        	echo '&quot;Zip.zip&quot; ouvert<br/>';
+							for ($i=1 ; $i<= $numImage ; $i++)
+							{
+								if (isset($_GET["fic".$i]) && ($_GET["fic".$i] != ""))
+								$zip->addFile('fic'.$i);
+							}
+			
+							$zip->close();
+				      	}
+
+						
+				//envoyer l'entete d'un fichier archive standard
+				header("Content-type: application/zip");
+				header("Content-Disposition: attachment; filename=$zipPath");
+				header("Pragma: no-cache");
+				header("Expires: 0");
+				
+				//envoyer l'archive
+				ob_end_clean();
+				readfile("$zipPath");
+				//exit();
+				}
+			}
+			break;
+			
+			
+
 
 	}
 }
@@ -370,7 +407,10 @@ if (!$nomRep)  die("Choisissez un r&eacutepertoire");
 </form>
 
 <?php 
-echo "<form enctype='multipart/form-data' method='post'>";
+if (isset($_SESSION["connecte"]) && ($_SESSION["connecte"]))
+{
+	echo "<form>";
+}
 $numImage = 0;
 $rep = opendir("./ressources/$nomRep"); 		// ouverture du repertoire 
 while ( $fichier = readdir($rep))	// parcours de tout le contenu de ce répertoire
@@ -404,9 +444,15 @@ while ( $fichier = readdir($rep))	// parcours de tout le contenu de ce répertoi
 					$test = verifvip($_SESSION["pseudo"]);
 					$vip = $test->fetch();
 					if ($vip[0] == "1")
+					{
 						echo "<a target=\"_blank\" href=\"ressources/$nomRep/$fichier\"><img src=\"ressources/$nomRep/thumbs/$fichier\"/></a>\n";
+						$chemin_fic="ressources/$nomRep/$fichier";
+					}
 					else
+					{
 						echo "<a target=\"_blank\" href=\"ressources/$nomRep/copyright$nomRep/$fichier\"><img src=\"ressources/$nomRep/copyright$nomRep/thumbs/$fichier\"/></a>\n";
+						$chemin_fic="ressources/$nomRep/copyright$nomRep/$fichier";
+					}
 				}
 				else
 					echo "<a><img src=\"ressources/$nomRep/copyright$nomRep/thumbs/$fichier\"/></a>\n";
@@ -423,7 +469,12 @@ while ( $fichier = readdir($rep))	// parcours de tout le contenu de ce répertoi
 				echo "<input type=\"text\" class=\"renommer\" name=\"nomFichier\" value=\"$fichier\" onclick=\"this.select();\" />\n";
 				echo "<input type=\"submit\" class=\"btn_renommer\" value=\">\" />\n";
 				echo "</form>\n";
-				echo "<br><input id='check' type='checkbox' name='$fichier'/>";
+				if (isset($_SESSION["connecte"]) && ($_SESSION["connecte"]))
+				{
+					echo "<br><input id='check' type='checkbox' name='fic$numImage' value='$chemin_fic'>";
+					echo "<input type='hidden' name='nom' value='$nomRep'>";
+					echo "<input type='hidden' name='numImage' value='$numImage'>";
+				}
 				echo "</div></div>\n";
 
 				// A compléter : appeler echo "<br style=\"clear:left;\" />"; si on a affiché 5 images sur la ligne actuelle
@@ -436,7 +487,11 @@ while ( $fichier = readdir($rep))	// parcours de tout le contenu de ce répertoi
 
 }
 closedir($rep);
-echo "<input type='submit'  class='btn btn-default' value='Download' name='action'></form>";
+if (isset($_SESSION["connecte"]) && ($_SESSION["connecte"]))
+{
+	echo "<input type='submit'  class='btn btn-default' value='Download' name='action'></form>";
+}
+
 // A compléter : afficher un message lorsque le répertoire est vide
 if ($numImage==0) echo "<h3>Aucune image dans le r&eacutepertoire</h3>";
 
