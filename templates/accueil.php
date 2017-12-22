@@ -3,6 +3,10 @@
 	include_once "libs/maLibSQL.pdo.php";
 	include_once "libs/maLibSecurisation.php"; 
 	include_once "libs/modele.php"; 
+include_once "libs/maLibUtils.php";
+include_once "libs/maLibSQL.pdo.php";
+include_once "libs/maLibSecurisation.php"; 
+include_once "libs/modele.php"; 
 //C'est la propriété php_self qui nous l'indique : 
 // Quand on vient de index : 
 // [PHP_SELF] => /chatISIG/index.php 
@@ -180,7 +184,6 @@ if (isset($_REQUEST["action"]))
 					echo "pb";
 				}
 			}
-
 			break;
 
 		case 'Supprimer Repertoire':
@@ -231,6 +234,7 @@ if (isset($_REQUEST["action"]))
 
 		case 'Download':
 
+
 		if (isset($_GET["nom"]) && ($_GET["nom"] != ""))
 			{
 				if (isset($_GET["numImage"]) && ($_GET["numImage"] != ""))
@@ -266,8 +270,28 @@ if (isset($_REQUEST["action"]))
 			break;
 			
 			
-
-
+			/*$nomRep = $_GET["nomRep"];
+			//on récupère un objet JSON qu'il faut convertir en variables PHP
+			$files = json_decode($_GET['filesCB'],true);
+			//on construit un fichier zip
+			$zip = new ZipArchive;
+			$zip->open('file.zip', ZipArchive::CREATE);
+			//on y ajoute les fichiers du tableau reçu
+			foreach ($files as $file)
+			{
+				$zip->addFile($file);
+			}
+			$zip->close();
+			$zipname='file.zip';
+			//on envoie le zip dans les entêtes qui vont permettre
+			//de lancer le téléchargement
+			header("Content-Type: application/zip");
+			header("Content-disposition: attachment; filename=".basename($zipname));
+			header("Content-Length: " . filesize($zipname));
+			ob_clean();
+			flush();
+			readfile($zipname);
+			break;*/
 	}
 }
 
@@ -564,6 +588,52 @@ function logo_copyright($image,$nomCopy)
 	imagedestroy($im);								// Libère toute la mémoire associé à l'image
 
 }	//fin logo_copyright()
+
+function downloadZip($folder,$files)
+{
+
+
+	//chemin du nouveau zip (je rajoute time() à la fin pour jamais avoir le même nom, au cas où)
+	$zipPath = "./".$folder.".zip";
+
+	$zip = new ZipArchive();
+
+
+	//création du fichier
+	if($zip->open('./'.$folder) == TRUE)
+		// On crée l’archive.
+		if($zip->open('./'.$folder, ZipArchive::CREATE) == TRUE)
+		{
+			echo '&quot;Zip.zip&quot; ouvert';
+		}
+
+
+	//pour tous les fichiers du tableau $files
+	foreach($files as $file)
+	{
+
+		// Ajout d’un fichier.
+		//$zip->addFile('./'.$folder,$file);
+
+		$zip->addFile("./".$folder."/".$file,$file);
+		/*//on ajoute le fichier qui est dans le dossier ./images/$folder/$file et en le nomant $file dans l'archive
+		  if(!$zip->addFile("./".$folder."/".$file,$file)) echo("FAILED ADDING &lt;".("./".$folder."/".$file).">");*/
+	}
+
+	//enregistrer l'archive
+	$zip->close();
+
+	//envoyer l'entete d'un fichier archive standard
+	header("Content-type: application/zip");
+	header("Content-Disposition: attachment; filename=$zipPath");
+	header("Pragma: no-cache");
+	header("Expires: 0");
+
+	//envoyer l'archive
+	ob_end_clean();
+	readfile("$zipPath");
+	exit();
+}
 ?>
 
 </body>
