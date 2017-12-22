@@ -36,7 +36,3 @@ if ($checked = valider("remember", "COOKIE")) $checked = "checked";
 </form>
 
 </p>
-
-
-
-

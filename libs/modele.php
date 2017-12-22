@@ -56,7 +56,23 @@ function verifUserBdd($login,$passe)
 
 	$SQL="SELECT id FROM users WHERE pseudo='$login' AND passe='$passe'";
 
-	return SQLGetChamp($SQL);
+	return (SQLSelect($SQL));
+
+	// si on avait besoin de plus d'un champ
+	// on aurait du utiliser SQLSelect
+}
+
+function verifvipBdd($login)
+{
+	// Vérifie l'identité d'un utilisateur 
+	// dont les identifiants sont passes en paramètre
+	// renvoie faux si user inconnu
+	// renvoie l'id de l'utilisateur si succès
+
+	$SQL="SELECT admin FROM users WHERE pseudo='$login'";
+
+	return (SQLSelect($SQL));
+
 	// si on avait besoin de plus d'un champ
 	// on aurait du utiliser SQLSelect
 }

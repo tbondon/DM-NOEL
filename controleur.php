@@ -37,13 +37,17 @@ session_start();
 					// On verifie l'utilisateur, 
 					// et on crée des variables de session si tout est OK
 					// Cf. maLibSecurisation
-					if (verifUser($login,$passe)) {
+					if (verifUser($login,$passe))
+					{
 						// tout s'est bien passé, doit-on se souvenir de la personne ? 
-						if (valider("remember")) {
+						if (valider("remember"))
+						{
 							setcookie("login",$login , time()+60*60*24*30);
 							setcookie("passe",$password, time()+60*60*24*30);
 							setcookie("remember",true, time()+60*60*24*30);
-						} else {
+						}
+						else
+						{
 							setcookie("login","", time()-3600);
 							setcookie("passe","", time()-3600);
 							setcookie("remember",false, time()-3600);
@@ -79,13 +83,3 @@ session_start();
 	ob_end_flush();
 	
 ?>
-
-
-
-
-
-
-
-
-
-

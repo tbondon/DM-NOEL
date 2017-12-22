@@ -26,6 +26,8 @@ if (basename($_SERVER["PHP_SELF"]) != "index.php")
 			echo "Utilisateur <b>$_SESSION[pseudo]</b> connecté depuis <b>$_SESSION[heureConnexion]</b> &nbsp; "; 
 			echo "<a href=\"controleur.php?action=Logout\">Se Déconnecter</a>";
 		}
+		else
+			echo "yooooooooooooooo";
 		?>
 	</p>
   </div>
