@@ -206,12 +206,18 @@ if (isset($_REQUEST["action"]))
 						{
 							// Pour éliminer les autres répertoires du menu déroulant, 
 							// on dispose de la fonction 'is_dir'
+							if (!is_dir("./ressources/$nomRep/copyright$nomRep/thumbs/" . $fichier))
+							{
+								unlink("./ressources/$nomRep/copyright$nomRep/thumbs/" . $fichier);
+							}
 							if (!is_dir("./ressources/$nomRep/thumbs/" . $fichier))
 							{
 								unlink("./ressources/$nomRep/thumbs/" . $fichier);
 							}
+							
 						}
 					}
+					rmdir("./ressources/$nomRep/copyright$nomRep/thumbs");
 					rmdir("./ressources/$nomRep/thumbs");
 				}
 
@@ -224,13 +230,19 @@ if (isset($_REQUEST["action"]))
 					{
 						// Pour éliminer les autres répertoires du menu déroulant, 
 						// on dispose de la fonction 'is_dir'
+						if (!is_dir("./ressources/$nomRep/copyright$nomRep/" . $fichier))
+						{
+							unlink("./ressources/$nomRep/copyright$nomRep/" . $fichier);
+						}
 						if (!is_dir("./ressources/$nomRep/" . $fichier))
 						{
 							unlink("./ressources/$nomRep/" . $fichier);
 						}
+						
 					}
 				}
 
+				rmdir("./ressources/$nomRep/copyright$nomRep/");
 				rmdir("./ressources/$nomRep");
 				$nomRep = false;
 			}
