@@ -129,9 +129,13 @@ if (isset($_REQUEST["action"]))
 						// A compléter : renomme le fichier et sa miniature si elle existe
 						if (file_exists("./ressources/$nomRep/$fichier"))			
 							rename("./ressources/$nomRep/$fichier","./ressources/$nomRep/$nomFichier");
+						if (file_exists("./ressources/$nomRep/copyright$nomRep/$fichier"))			
+							rename("./ressources/$nomRep/copyright$nomRep/$fichier","./ressources/$nomRep/copyright$nomRep/$nomFichier");
 
 						if (file_exists("./ressources/$nomRep/thumbs/$fichier"))
 							rename("./ressources/$nomRep/thumbs/$fichier","./ressources/$nomRep/thumbs/$nomFichier");
+						if (file_exists("./ressources/$nomRep/copyright$nomRep/thumbs/$fichier"))
+							rename("./ressources/$nomRep/copyright$nomRep/thumbs/$fichier","./ressources/$nomRep/copyright$nomRep/thumbs/$nomFichier");
 
 
 					}
@@ -532,27 +536,17 @@ function logo_copyright($image,$nomCopy)
 
 function downloadZip($folder,$files)
 {
-
-
 	//chemin du nouveau zip (je rajoute time() à la fin pour jamais avoir le même nom, au cas où)
 	$zipPath = "./".$folder.".zip";
-
 	$zip = new ZipArchive();
-
-
 	//création du fichier
 	if($zip->open('./'.$folder) == TRUE)
 		// On crée l’archive.
 		if($zip->open('./'.$folder, ZipArchive::CREATE) == TRUE)
-		{
 			echo '&quot;Zip.zip&quot; ouvert';
-		}
-
-
 	//pour tous les fichiers du tableau $files
 	foreach($files as $file)
 	{
-
 		// Ajout d’un fichier.
 		//$zip->addFile('./'.$folder,$file);
 
@@ -560,16 +554,13 @@ function downloadZip($folder,$files)
 		/*//on ajoute le fichier qui est dans le dossier ./images/$folder/$file et en le nomant $file dans l'archive
 		  if(!$zip->addFile("./".$folder."/".$file,$file)) echo("FAILED ADDING &lt;".("./".$folder."/".$file).">");*/
 	}
-
 	//enregistrer l'archive
 	$zip->close();
-
 	//envoyer l'entete d'un fichier archive standard
 	header("Content-type: application/zip");
 	header("Content-Disposition: attachment; filename=$zipPath");
 	header("Pragma: no-cache");
 	header("Expires: 0");
-
 	//envoyer l'archive
 	ob_end_clean();
 	readfile("$zipPath");
